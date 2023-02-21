@@ -1,36 +1,29 @@
-use jast_lib::jast::Http;
-use jast_lib::jast::Res;
-use jast_lib::jast::Routes;
-use jast_lib::jast::Data;
 
-// http.get
+use jast_lib::jast::{Http, Res, Data, RouteResponse};
 
 fn main() {
     println!("inside main of test ");
 
-    let route1 = Routes {
-        method: "GET",
-        route: "/hola",
-        response: Res::json(vec![
-            ("name", Data::Str(String::from("Francisco"))), 
-            ("lastname", Data::Str(String::from("Veiras"))), 
-        ])
-    };
+    fn controller() -> RouteResponse<'static> {
+        let response = RouteResponse {
+            method: "GET",
+            res: Res::json(vec![
+                ("name", Data::Str(String::from("Juan"))), 
+                ("lastname", Data::Str(String::from("Alberto"))), 
+                ("id", Data::Int(i32::from(1)))
+            ])
+        };
 
-    let route2 = Routes {
-        method: "GET",
-        route: "/chau",
-        response: Res::json(vec![
-            ("name", Data::Str(String::from("Juan"))), 
-            ("lastname", Data::Str(String::from("Alberto"))), 
-            ("id", Data::Int(i32::from(1)))
-        ])
-    };
+        response
+    }
 
-
-
-
-    let routes = vec![route1, route2];
+    let routes = vec![
+        Http::route("/", controller()),
+        Http::route("/hola", 
+            (|| RouteResponse { method: "GET", res: Res::json(vec![("name", Data::Str("Juan".to_string()))]) })()),
+        Http::route("/twitter", 
+            (|| RouteResponse { method: "GET", res: Res::json(vec![("twitter", Data::Str("prueba".to_string()))]) })()),
+    ];
 
     Http::create_server(
         "localhost", 
