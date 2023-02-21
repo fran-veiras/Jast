@@ -1,0 +1,7 @@
+[package]
+name = "thk-lk"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+jast_lib = { path = "../jast_lib" }
