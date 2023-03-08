@@ -17,7 +17,7 @@ pub struct Routes<'a> {
     // GET / HTTP/1.1
     pub method: &'a str,
     pub route: &'a str,
-    pub response: String,
+    pub response: &'a str,
 }
 
 
@@ -73,6 +73,12 @@ fn handle_connection(mut stream: TcpStream, routes: Vec<Routes<'_>>) {
     stream.write_all(response.as_bytes()).unwrap();
 }
 
+#[derive(Debug)]
+pub struct RouteResponse<'a> {
+   pub method: &'a str, 
+   pub res: &'a str
+}
+
 
 impl Http {   
     // impementación del server
@@ -85,7 +91,21 @@ impl Http {
             handle_connection(stream, routes.clone());
         }
     }
+
+
+    // generar nuevas rutas
+    pub fn route<'a>(route_name: &'static str, response: RouteResponse<'static>) -> Routes<'a> {
+        let new_route = Routes {
+            method: response.method,
+            route: route_name,
+            response: response.res 
+        };
+
+        new_route
+    }
 }
+
+
 
 struct DynamicStruct {
     fields: Vec<(String, Value)>,
@@ -99,7 +119,7 @@ pub enum Data {
 
 impl Res {
     // response en formato json
-    pub fn json(res: Vec<(&str, Data)>) -> String {
+    pub fn json(res: Vec<(&str, Data)>) -> &'static str {
         let mut dynamic_struct = DynamicStruct { fields: vec![] };
 
         for (response, data) in res {
@@ -127,7 +147,7 @@ impl Res {
         // formato para pasar a json en handle response
         let res_format_json = format!(r#"{{ {} }}"#, input_to_json);
 
-        res_format_json.to_string()
+        Box::leak(res_format_json.into_boxed_str())
     }
 }
 
