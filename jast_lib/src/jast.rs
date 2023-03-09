@@ -2,11 +2,11 @@ use std::{
     io::{prelude::*, BufReader},
     net::{TcpListener, TcpStream},
 };
-use serde_json::Value;
+use std::fs;
+use serde_json::{json, Value};
 
 pub struct Http;
 pub struct Res;
-
 #[derive(Debug)]
 #[derive(Clone)]
 
@@ -27,8 +27,6 @@ fn get_filtered_routes<'a>(routes: Vec<Routes<'a>>, parts_of_req: Vec<&str>) -> 
     let method = parts_of_req[0];
 
     // route 
-    println!("route {}", route);
-
     let filtered_routes: Vec<Routes<'_>> = routes
         .into_iter()
         .filter(|voc| voc.method == method.to_string())
@@ -47,14 +45,24 @@ fn handle_connection(mut stream: TcpStream, routes: Vec<Routes<'_>>) {
     // status_line como response a cada metodo con la respuesta (route_response) json o texto
     let (status_line, route_response) = if request_line.contains("GET") {
         let route = get_filtered_routes(routes, parts_of_req);
-        if route.len() > 0 {
-            let object: Value = serde_json::from_str(&route[0].response).unwrap();
+
+        let error_json = r#"{"error": "404 not found"}"#;
+        // pasarlo a fn para diferentes error codes
+        let response_err_json: Value = serde_json::from_str(&error_json).unwrap();
         
-            ("HTTP/1.1 200 OK", object)
+        if route.len() > 0 {
+
+            let result = serde_json::from_str(&route[0].response);
+            let hola = result.unwrap_or_default();
+
+            let mess = match hola {
+                Some(object) => ("HTTP/1.1 200 OK", object),
+                None => ("HTTP/1.1 200 OK", json!({"other": &route[0].response})),
+            };
+
+            mess
         } else {
-            let error_json = r#"{"error": "404 not found"}"#;
-            let response: Value = serde_json::from_str(&error_json).unwrap();
-            ("HTTP/1.1 404 NOT FOUND", response)
+            ("HTTP/1.1 404 NOT FOUND", response_err_json)
         }
     } else {
         let error_json = r#"{"error": "404 not found"}"#;
@@ -62,15 +70,28 @@ fn handle_connection(mut stream: TcpStream, routes: Vec<Routes<'_>>) {
         ("HTTP/1.1 404 NOT FOUND", response)
     };
 
-    let contents = route_response;
-    let length = contents.to_string().len();
+    // si el campo other existe lo leemos como string
+    if let Some(name_value) = route_response.get("other") {
+        if let Some(name) = name_value.as_str() {
+            
+            let content = fs::read_to_string(name).unwrap();
 
-    // armo cuerpo de la respuesta
-    let response =
-        format!("{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}");
+            let length = content.len();
+            
+            let response = format!(
+                    "{status_line}\r\nContent-Length: {length}\r\n\r\n{content}");
+            
+            stream.write_all(response.as_bytes()).unwrap();  
+        }
+    } else {
+        let contents = route_response;
+        let length = contents.to_string().len();
+        
+        let response =
+            format!("{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}");
 
-    // respondo la request
-    stream.write_all(response.as_bytes()).unwrap();
+        stream.write_all(response.as_bytes()).unwrap();
+    }
 }
 
 #[derive(Debug)]
