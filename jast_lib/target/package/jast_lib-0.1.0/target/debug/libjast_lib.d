@@ -1,0 +1,1 @@
+/home/francisco/Desktop/workspace/Jast/jast_lib/target/package/jast_lib-0.1.0/target/debug/libjast_lib.rlib: /home/francisco/Desktop/workspace/Jast/jast_lib/target/package/jast_lib-0.1.0/src/jast.rs /home/francisco/Desktop/workspace/Jast/jast_lib/target/package/jast_lib-0.1.0/src/lib.rs
