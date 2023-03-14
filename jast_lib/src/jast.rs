@@ -2,15 +2,15 @@ use std::{
     io::{prelude::*, BufReader},
     net::{TcpListener, TcpStream},
 };
+use std::fs::OpenOptions;
 use std::fs;
 use serde_json::{json, Value};
+use std::env;
 
 pub struct Http;
 pub struct Res;
 #[derive(Debug)]
 #[derive(Clone)]
-
-
 
 // cuerpo de las rutas
 pub struct Routes<'a> {
@@ -20,6 +20,24 @@ pub struct Routes<'a> {
     pub response: &'a str,
 }
 
+fn error_log(err_message : &str) -> std::io::Result<()> {
+    match fs::File::open("jast_err_logs.txt") {
+        Ok(mut file) => {
+            // implementar escribir errores 
+            writeln!(file, "{};", err_message);
+
+            Ok(())
+        },
+        Err(err) => {
+            let mut current_dir = env::current_dir().unwrap();
+            current_dir.push("jast_err_logs.txt");
+
+            fs::File::create(current_dir);
+
+            Ok(())
+        }
+    }
+}
 
 // obtengo method, route y response x metodo llamado, falta hacer por route tb.
 fn get_filtered_routes<'a>(routes: Vec<Routes<'a>>, parts_of_req: Vec<&str>) -> Vec<Routes<'a>> {
@@ -70,18 +88,31 @@ fn handle_connection(mut stream: TcpStream, routes: Vec<Routes<'_>>) {
         ("HTTP/1.1 404 NOT FOUND", response)
     };
 
+    // TODO: refactor -> soporte de text
     // si el campo other existe lo leemos como string
     if let Some(name_value) = route_response.get("other") {
-        if let Some(name) = name_value.as_str() {
-            
-            let content = fs::read_to_string(name).unwrap();
+        if let Some(file_name) = name_value.as_str() {
+            error_log("hola");
 
-            let length = content.len();
+            // current dir usa como root la ruta del proyecto en la que esta instalado.
+            let mut current_dir = env::current_dir().unwrap();
+            // le pusheo el nombre del archivo
+            current_dir.push(file_name);
             
-            let response = format!(
-                    "{status_line}\r\nContent-Length: {length}\r\n\r\n{content}");
+            match fs::read_to_string(current_dir) {
+                Ok(content) => {
+                    let length = content.len();
             
-            stream.write_all(response.as_bytes()).unwrap();  
+                    let response = format!(
+                        "{status_line}\r\nContent-Length: {length}\r\n\r\n{content}");
+            
+                    stream.write_all(response.as_bytes()).unwrap();  
+                },
+                Err(_) => {
+
+                }
+            }
+
         }
     } else {
         let contents = route_response;
