@@ -22,7 +22,7 @@ fn main() {
         Http::route("/hola", 
             (|| RouteResponse { method: "GET", res: Res::json(vec![("name", Data::Str("Juan".to_string()))]) })()),
         Http::route("/html", 
-            (|| RouteResponse { method: "GET", res: "src/index.html"})())
+            (|| RouteResponse { method: "GET", res: "src"})())
     ];
 
     Http::create_server(

@@ -2,13 +2,15 @@ use std::{
     io::{prelude::*, BufReader},
     net::{TcpListener, TcpStream},
 };
-use std::fs::OpenOptions;
 use std::fs;
 use serde_json::{json, Value};
 use std::env;
+use crate::jast::utils::error_log;
 
 pub struct Http;
 pub struct Res;
+
+mod utils;
 #[derive(Debug)]
 #[derive(Clone)]
 
@@ -18,25 +20,6 @@ pub struct Routes<'a> {
     pub method: &'a str,
     pub route: &'a str,
     pub response: &'a str,
-}
-
-fn error_log(err_message : &str) -> std::io::Result<()> {
-    match fs::File::open("jast_err_logs.txt") {
-        Ok(mut file) => {
-            // implementar escribir errores 
-            writeln!(file, "{};", err_message);
-
-            Ok(())
-        },
-        Err(err) => {
-            let mut current_dir = env::current_dir().unwrap();
-            current_dir.push("jast_err_logs.txt");
-
-            fs::File::create(current_dir);
-
-            Ok(())
-        }
-    }
 }
 
 // obtengo method, route y response x metodo llamado, falta hacer por route tb.
@@ -92,10 +75,15 @@ fn handle_connection(mut stream: TcpStream, routes: Vec<Routes<'_>>) {
     // si el campo other existe lo leemos como string
     if let Some(name_value) = route_response.get("other") {
         if let Some(file_name) = name_value.as_str() {
-            error_log("hola");
-
             // current dir usa como root la ruta del proyecto en la que esta instalado.
-            let mut current_dir = env::current_dir().unwrap();
+            let mut current_dir = match env::current_dir() {
+                Ok(dir) => dir,
+                Err(e) => {
+                    error_log(&format!("{}", e)).unwrap();
+
+                    panic!("{}", e);                    
+                }
+            };
             // le pusheo el nombre del archivo
             current_dir.push(file_name);
             
@@ -108,8 +96,10 @@ fn handle_connection(mut stream: TcpStream, routes: Vec<Routes<'_>>) {
             
                     stream.write_all(response.as_bytes()).unwrap();  
                 },
-                Err(_) => {
+                Err(e) => {
+                    error_log(&format!("{}", e)).unwrap();
 
+                    panic!("{}", e);                    
                 }
             }
 
