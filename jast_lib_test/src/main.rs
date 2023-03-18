@@ -1,5 +1,5 @@
 
-use jast_lib::jast::{Http, Res, Data, RouteResponse};
+use jast_lib::{Http, Res, Data, RouteResponse};
 
 fn main() {
     println!("inside main of test ");
@@ -22,7 +22,7 @@ fn main() {
         Http::route("/hola", 
             (|| RouteResponse { method: "GET", res: Res::json(vec![("name", Data::Str("Juan".to_string()))]) })()),
         Http::route("/html", 
-            (|| RouteResponse { method: "GET", res: "src"})())
+            (|| RouteResponse { method: "GET", res: "src/index.html"})())
     ];
 
     Http::create_server(
