@@ -1,9 +1,6 @@
-
 use jast_lib::{Http, Res, Data, RouteResponse};
 
 fn main() {
-    println!("inside main of test ");
-
     fn controller() -> RouteResponse<'static> {
         let response = RouteResponse {
             method: "GET",
