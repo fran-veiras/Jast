@@ -1,5 +1,6 @@
 use crate::types::Routes;
-// obtengo method, route y response x metodo llamado, falta hacer por route tb.
+
+// Receives the stream of the request and with the method and route filter the created routes
 pub fn get_filtered_routes<'a>(routes: Vec<Routes<'a>>, parts_of_req: Vec<&str>) -> Vec<Routes<'a>> {
     let route = parts_of_req[1];
     let method = parts_of_req[0];
