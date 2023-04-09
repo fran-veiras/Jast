@@ -7,15 +7,20 @@ use crate::routes::{types, route_handler};
 use crate::utils::error_log;
 
 
-pub fn handle_connection(mut stream: TcpStream, routes: Vec<types::Routes<'_>>) {
+use std::time::Duration; // new import
+
+pub fn handle_connection(mut stream: TcpStream, routes: &Vec<types::Routes>) {
+
+    std::thread::sleep(Duration::from_secs(5)); // add delay of 5 seconds
     let buf_reader = BufReader::new(&mut stream);
     let request_line = buf_reader.lines().next().unwrap().unwrap();
 
     let parts_of_req: Vec<&str> = request_line.split(' ').collect();
 
+
     // status_line como response a cada metodo con la respuesta (route_response) json o texto
     let (status_line, route_response) = if request_line.contains("GET") {
-        let route = route_handler::get_filtered_routes(routes, parts_of_req);
+        let route = route_handler::get_filtered_routes(&routes, parts_of_req);
 
         let error_json = r#"{"error": "404 not found"}"#;
         // pasarlo a fn para diferentes error codes

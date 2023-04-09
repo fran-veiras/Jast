@@ -2,6 +2,16 @@ use std::fs::OpenOptions;
 use chrono::Utc;
 use std::io::Write;
 
+/// Saves error messages to a file for traceability purposes.
+///
+/// # Arguments
+///
+/// * `err_message` - The error message to be saved to the file
+///
+/// # Returns
+///
+/// ok(()) if the error message was successfully saved to the file.
+
 pub fn error_log(err_message : &str) -> std::io::Result<()> {
     let file = OpenOptions::new()
         .read(true)

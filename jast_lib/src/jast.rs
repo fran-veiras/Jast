@@ -1,11 +1,15 @@
 mod utils;
 
 mod routes;
-use routes::types;
+pub use routes::types;
 
 mod connection;
 pub use connection::http::Http;
 pub use connection::response;
+
+pub use connection::response::Res;
+pub use connection::types::DataTypes;
+
 
 
 #[derive(Debug)]

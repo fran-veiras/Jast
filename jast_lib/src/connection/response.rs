@@ -1,15 +1,10 @@
 
 use serde_json::Value;
+use crate::connection::types::DataTypes;
 pub struct Res;
 
 struct DynamicStruct {
     fields: Vec<(String, Value)>,
-}
-
-#[derive(Debug)]
-pub enum DataTypes {
-    Str(String),
-    Int(i32)
 }
 
 impl Res {
