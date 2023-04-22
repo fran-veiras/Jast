@@ -5,14 +5,19 @@ use crate::connection::handle_connection::handle_connection;
 use crate::routes::types;
 use crate::connection::threadpool::ThreadPool;
 use std::sync::Arc;
-
 pub struct Http;
+use crate::Builder;
+
+use num_cpus;
 
 impl Http {
-    pub fn create_server(host: &str, port: &str, routes: Vec<types::Routes<'static>>) {
-        let listener = TcpListener::bind(format!("{}:{}", host, port)).unwrap();
-        let routes = Arc::new(routes);
-        let pool = ThreadPool::new(4);
+    pub fn create_server(runtime : &mut Builder<'static>) {
+        let listener = TcpListener::bind(runtime.host).unwrap();
+        let routes = Arc::new(runtime.routes.clone());
+
+        let default_threads = num_cpus::get_physical();
+
+        let pool = ThreadPool::new(default_threads);
 
         for stream in listener.incoming() {
             let stream = stream.unwrap();

@@ -17,3 +17,4 @@ path = "src/jast.rs"
 [dependencies]
 serde_json = "1.0.93"
 chrono = "0.4.24"
+num_cpus = "1.0"

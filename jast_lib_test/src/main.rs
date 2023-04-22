@@ -1,4 +1,4 @@
-use jast_lib::{Http, Res, DataTypes, RouteResponse};
+use jast_lib::{Http, Res, DataTypes, RouteResponse, Builder};
 
 fn main() {
     fn controller() -> RouteResponse<'static> {
@@ -14,6 +14,7 @@ fn main() {
         response
     }
 
+
     let routes = vec![
         Http::route("/", controller()),
         Http::route("/hola", 
@@ -22,10 +23,12 @@ fn main() {
             (|| RouteResponse { method: "GET", res: "src/index.html"})())
     ];
 
+    let mut binding = Builder::new("localhost:8080", routes);
+
+    let runtime = binding.worker_threads(4);
+    
     Http::create_server(
-        "localhost", 
-        "8080", 
-        routes
+        runtime
     )
 }
 

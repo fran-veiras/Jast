@@ -7,6 +7,8 @@ mod connection;
 pub use connection::http::Http;
 pub use connection::response;
 
+pub use crate::connection::builder::Builder;
+
 pub use connection::response::Res;
 pub use connection::types::DataTypes;
 

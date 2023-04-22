@@ -6,12 +6,7 @@ use std::{env, fs};
 use crate::routes::{types, route_handler};
 use crate::utils::error_log;
 
-
-use std::time::Duration; // new import
-
 pub fn handle_connection(mut stream: TcpStream, routes: &Vec<types::Routes>) {
-
-    std::thread::sleep(Duration::from_secs(5)); // add delay of 5 seconds
     let buf_reader = BufReader::new(&mut stream);
     let request_line = buf_reader.lines().next().unwrap().unwrap();
 
