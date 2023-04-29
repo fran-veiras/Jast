@@ -11,20 +11,21 @@ use crate::Builder;
 use num_cpus;
 
 impl Http {
-    pub fn create_server(runtime : &mut Builder<'static>) {
+    pub fn create_server(runtime : Builder<'static>) {
         let listener = TcpListener::bind(runtime.host).unwrap();
-        let routes = Arc::new(runtime.routes.clone());
 
         let default_threads = num_cpus::get_physical();
 
         let pool = ThreadPool::new(default_threads);
 
+        let routes_arc = Arc::new(runtime.routes);
+
         for stream in listener.incoming() {
             let stream = stream.unwrap();
-            let all_routes = Arc::clone(&routes);
+            let routes = routes_arc.clone();
 
-            pool.execute(move|| {
-                handle_connection(stream, &all_routes);
+            pool.execute(move || {
+                handle_connection(stream, &routes);
             });
         }
     }

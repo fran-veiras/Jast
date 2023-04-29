@@ -15,7 +15,7 @@ pub fn handle_connection(mut stream: TcpStream, routes: &Vec<types::Routes>) {
 
     // status_line como response a cada metodo con la respuesta (route_response) json o texto
     let (status_line, route_response) = if request_line.contains("GET") {
-        let route = route_handler::get_filtered_routes(&routes, parts_of_req);
+        let route = route_handler::get_filtered_routes(routes, parts_of_req);
 
         let error_json = r#"{"error": "404 not found"}"#;
         // pasarlo a fn para diferentes error codes

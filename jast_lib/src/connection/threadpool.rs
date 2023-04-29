@@ -33,7 +33,7 @@ impl ThreadPool {
         ThreadPool { workers, sender }
     }
 
-    pub fn execute<F>(&self, f: F)
+    pub fn execute<F>(&self, f:F)
         where
             F: FnOnce() + Send + 'static,
         {

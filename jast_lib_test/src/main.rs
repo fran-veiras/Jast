@@ -22,10 +22,11 @@ fn main() {
             (|| RouteResponse { method: "GET", res: "src/index.html"})())
     ];
 
-    let binding = Builder::new("localhost:8080", routes).worker_threads(4);
+    let runtime = Builder::new("localhost:8080", routes).worker_threads(4);
+
     
     Http::create_server(
-       binding
+       runtime
     )
 }
 
