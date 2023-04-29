@@ -11,14 +11,24 @@ use crate::Builder;
 use num_cpus;
 
 impl Http {
-    pub fn create_server(runtime : Builder<'static>) {
-        let listener = TcpListener::bind(runtime.host).unwrap();
+
+    /// Server execution.
+    ///
+    /// # Arguments
+    ///
+    /// * settings - Struct of Builder.
+    ///
+    /// # Returns
+    ///
+    /// server runtime.
+    pub fn create_server(settings: Builder<'static>) {
+        let listener = TcpListener::bind(settings.host).unwrap();
 
         let default_threads = num_cpus::get_physical();
 
         let pool = ThreadPool::new(default_threads);
 
-        let routes_arc = Arc::new(runtime.routes);
+        let routes_arc = Arc::new(settings.routes);
 
         for stream in listener.incoming() {
             let stream = stream.unwrap();
@@ -30,6 +40,17 @@ impl Http {
         }
     }
 
+
+    /// Create new route.
+    ///
+    /// # Arguments
+    ///
+    /// * route_name - route location.
+    /// * response - route response.
+    ///
+    /// # Returns
+    ///
+    /// Struct of Routes (method, route, response)
     pub fn route<'a>(route_name: &'static str, response: RouteResponse<'static>) -> types::Routes<'a> {
         let new_route = types::Routes {
             method: response.method,

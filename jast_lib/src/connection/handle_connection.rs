@@ -40,7 +40,6 @@ pub fn handle_connection(mut stream: TcpStream, routes: &Vec<types::Routes>) {
         ("HTTP/1.1 404 NOT FOUND", response)
     };
 
-    // TODO: refactor -> soporte de text
     // si el campo other existe lo leemos como string
     if let Some(name_value) = route_response.get("other") {
         if let Some(file_name) = name_value.as_str() {
