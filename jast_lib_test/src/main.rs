@@ -22,6 +22,7 @@ fn main() {
             (|| RouteResponse { method: "GET", res: "src/index.html"})())
     ];
 
+
     let settings = Builder::new("localhost:8080", routes).worker_threads(4);
 
     Http::create_server(

@@ -8,7 +8,15 @@ struct DynamicStruct {
 }
 
 impl Res {
-    // response en formato json
+    /// Json response.
+    ///
+    /// # Arguments
+    ///
+    /// * res - Vector of (field name (&str) & struct of DataTypes) 
+    ///
+    /// # Returns
+    ///
+    /// str formatted for json.
     pub fn json(res: Vec<(&str, DataTypes)>) -> &'static str {
         let mut dynamic_struct = DynamicStruct { fields: vec![] };
 
