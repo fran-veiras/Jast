@@ -1,1 +1,0 @@
-/home/francisco/Desktop/workspace/Jast/jast_lib_test/target/debug/thk-lk: /home/francisco/Desktop/workspace/Jast/jast_lib/src/jast.rs /home/francisco/Desktop/workspace/Jast/jast_lib/src/lib.rs /home/francisco/Desktop/workspace/Jast/jast_lib_test/src/main.rs
