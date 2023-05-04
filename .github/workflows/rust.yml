@@ -15,8 +15,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.ref }}
+        path: '../../jast_lib' # Directorio de trabajo
     - name: Build
+      working-directory: ../../jast_lib # Ruta relativa al directorio de trabajo
       run: cargo build --verbose
     - name: Run tests
+      working-directory: ../../jast_lib # Ruta relativa al directorio de trabajo
       run: cargo test --verbose
+
