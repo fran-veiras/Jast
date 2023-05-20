@@ -28,7 +28,8 @@ jobs:
       - name: Build
         run: cargo build --release --manifest-path jast_lib/Cargo.toml
 
+      - name: Iniciar sesión en crates.io
+        run: cargo login --registry crates.io ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
       - name: Publicar
         run: cargo publish --manifest-path jast_lib/Cargo.toml
-        env:
-          CARGO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
