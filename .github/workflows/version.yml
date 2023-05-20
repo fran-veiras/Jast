@@ -18,8 +18,8 @@ jobs:
       - name: Configurar el entorno de Rust
         uses: actions-rs/toolchain@v1
         with:
-          profile: minimal
-          override: stable
+          toolchain: stable
+          override: true
 
       - name: Leer versión desde Cargo.toml
         id: get_version
