@@ -29,7 +29,7 @@ jobs:
         run: cargo build --release --manifest-path jast_lib/Cargo.toml
 
       - name: Publicar en crates.io
-        run: cargo publish --manifest-path jast_lib/Cargo.toml --registry=https://index.crates.io/api/v1/crates
+        run: cargo publish --manifest-path jast_lib/Cargo.toml
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
