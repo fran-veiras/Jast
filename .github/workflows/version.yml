@@ -1,4 +1,4 @@
-name: Despliegue en producción
+name: version deploy
 
 on:
   push:
@@ -15,20 +15,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Configurar el entorno de Rust
+      - name: Rust environment settings
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
 
-      - name: Leer versión desde Cargo.toml
+      - name: Cargo.toml version
         id: get_version
         run: echo "::set-output name=version::$(awk -F\" '/^version/ {print $2}' jast_lib/Cargo.toml)"
 
       - name: Build
         run: cargo build --release --manifest-path jast_lib/Cargo.toml
 
-      - name: Publicar en crates.io
+      - name: Publish on crates.io
         run: cargo publish --manifest-path jast_lib/Cargo.toml
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
