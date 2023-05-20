@@ -7,6 +7,7 @@ use crate::routes::{types, route_handler};
 use crate::utils::error_log;
 
 pub fn handle_connection(mut stream: TcpStream, routes: &Vec<types::Routes>) {
+
     let buf_reader = BufReader::new(&mut stream);
     let request_line = buf_reader.lines().next().unwrap().unwrap();
 

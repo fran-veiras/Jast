@@ -1,0 +1,34 @@
+name: Despliegue en producción
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configurar el entorno de Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: stable
+
+      - name: Leer versión desde Cargo.toml
+        id: get_version
+        run: echo "::set-output name=version::$(awk -F\" '/^version/ {print $2}' jast_lib/Cargo.toml)"
+
+      - name: Build
+        run: cargo build --release --manifest-path jast_lib/Cargo.toml
+
+      - name: Publicar
+        run: cargo publish --manifest-path jast_lib/Cargo.toml
+        env:
+          CARGO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}

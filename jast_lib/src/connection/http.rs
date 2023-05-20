@@ -11,7 +11,6 @@ use crate::Builder;
 use num_cpus;
 
 impl Http {
-
     /// Server execution.
     ///
     /// # Arguments
@@ -23,10 +22,11 @@ impl Http {
     /// server runtime.
     pub fn create_server(settings: Builder<'static>) {
         let listener = TcpListener::bind(settings.host).unwrap();
-
-        let default_threads = num_cpus::get_physical();
-
-        let pool = ThreadPool::new(default_threads);
+        
+        let pool = match settings.worker_threads {
+            Some(number) => ThreadPool::new(number),
+            None => ThreadPool::new(num_cpus::get_physical())
+        };
 
         let routes_arc = Arc::new(settings.routes);
 

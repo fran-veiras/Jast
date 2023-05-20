@@ -1,0 +1,9 @@
+[package]
+name = "version_control"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+
+[dependencies]
+toml = "0.5"

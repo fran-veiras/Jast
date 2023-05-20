@@ -1,9 +1,15 @@
 use crate::types::Routes;
 
 #[derive(Debug)]
+/// Builder struct for configuring a server.
 pub struct Builder<'a> {
+    /// Number of worker threads for the server.
     pub worker_threads: Option<usize>,
+    
+    /// List of routes for the server.
     pub routes: Vec<Routes<'static>>,
+    
+    /// Host address for the server.
     pub host: &'a str
 }
 
